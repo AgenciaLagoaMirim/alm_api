@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     # apps
     "accounts.apps.AccountsConfig",
-    # "datadash.apps.DatadashConfig",
+    "datadash.apps.DatadashConfig",
 ]
 
 MIDDLEWARE = [
