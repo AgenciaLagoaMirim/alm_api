@@ -1,0 +1,29 @@
+# .editorconfig
+# Configurações gerais
+root = true
+
+# Estilo do final de linha
+[*]
+end_of_line = lf
+insert_final_newline = false
+
+# Estilo de identação
+[*.py]
+indent_style = space
+indent_size = 2
+
+[*.html]
+indent_style = space
+indent_size = 2
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+# Trailing whitespace (espaços no final da linha)
+[*.py]
+trim_trailing_whitespace = true
+
+# Codificação de caracteres
+[*.py]
+charset = utf-8
