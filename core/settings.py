@@ -97,7 +97,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "alm_dds_api",
+        "NAME": "alm_api",
         "USER": "postgres",
         "PASSWORD": "admin",
         "HOST": "localhost",
