@@ -23,14 +23,19 @@ class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
     serializer_class = StationReadingsSensorsSerializer
 
 
-class StationStationModelViewSet(viewsets.ModelViewSet):
-    queryset = StationStation.objects.all()
-    serializer_class = StationStationSerializer
-
-
 class StationReadingsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadings.objects.all()
     serializer_class = StationReadingsSerializer
+
+
+class StationSensorsModelViewSet(viewsets.ModelViewSet):
+    queryset = StationSensors.objects.all()
+    serializer_class = StationSensorsSerializer
+
+
+class StationStationModelViewSet(viewsets.ModelViewSet):
+    queryset = StationStation.objects.all()
+    serializer_class = StationStationSerializer
 
 
 class CustomViewSet(viewsets.ViewSet):
