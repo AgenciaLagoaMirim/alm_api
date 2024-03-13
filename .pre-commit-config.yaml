@@ -30,10 +30,10 @@ repos:
         language: system
         pass_filenames: false
         stages: [commit]
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
+  # - repo: https://github.com/pycqa/isort
+  #   rev: 5.13.2
+  #   hooks:
+  #     - id: isort
   - repo: https://github.com/pre-commit/mirrors-autopep8
     rev: "v2.0.4" # Use the sha / tag you want to point at
     hooks:
