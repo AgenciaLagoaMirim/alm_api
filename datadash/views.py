@@ -39,6 +39,20 @@ class StationStationModelViewSet(viewsets.ModelViewSet):
 
 
 class CustomViewSet(viewsets.ViewSet):
+
+    def can_be_stored_as_double(self, value):
+        try:
+            # Tenta converter o valor para float
+            float_value = float(value)
+            # Verifica se o valor está dentro da faixa de valores suportada pelo tipo double no PostgreSQL
+            if -1.7976931348623157e308 <= float_value <= 1.7976931348623157e308:
+                return True
+            else:
+                return False
+        except ValueError:
+            # Se a conversão para float falhar, significa que o valor não pode ser armazenado como double
+            return False
+
     def create(self, request):
         dados = request.data
         station_name = dados.get(
@@ -75,6 +89,10 @@ class CustomViewSet(viewsets.ViewSet):
                 for indice, (chave, valor) in enumerate(dados.items()):
                     if indice > 1:
                         print(f"Chave: {chave}, Valor: {valor}")
+                        if self.can_be_stored_as_double(valor):
+                            valor = valor
+                        else:
+                            valor = None
                         station_sensor = StationSensors.objects.get(
                             code=chave, station=station_instance
                         )
