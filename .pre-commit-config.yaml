@@ -22,14 +22,14 @@ repos:
   #         - flake8-comprehensions
   #         - flake8-simplify
   #       stages: [commit]
-  - repo: local
-    hooks:
-      - id: requirements
-        name: requirements
-        entry: cmd /c 'pip freeze > requirements.txt; git add requirements.txt'
-        language: system
-        pass_filenames: false
-        stages: [commit]
+  # - repo: local
+  #   hooks:
+  #     - id: requirements
+  #       name: requirements
+  #       entry: cmd /c 'pip freeze > requirements.txt; git add requirements.txt'
+  #       language: system
+  #       pass_filenames: false
+  #       stages: [commit]
   # - repo: https://github.com/pycqa/isort
   #   rev: 5.13.2
   #   hooks:

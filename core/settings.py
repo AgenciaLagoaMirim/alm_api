@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # terceiros
     "corsheaders",
     "djoser",
+    "drf_spectacular",
     "rest_framework",
     "rest_framework.authtoken",
     # apps
@@ -69,6 +70,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -146,3 +148,10 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.Customuser"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ALM - Data Dash System",
+    "DESCRIPTION": "API REST para acesso aos dados",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}

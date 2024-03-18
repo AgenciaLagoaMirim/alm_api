@@ -75,7 +75,7 @@ class CustomViewSet(viewsets.ViewSet):
                 for indice, (chave, valor) in enumerate(dados.items()):
                     if indice > 1:
                         print(f"Chave: {chave}, Valor: {valor}")
-                        station_sensor = StationSensors.objects.create(
+                        station_sensor = StationSensors.objects.get(
                             code=chave, station=station_instance
                         )
 
