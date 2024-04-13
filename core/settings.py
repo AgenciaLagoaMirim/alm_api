@@ -64,9 +64,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-]
+CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://localhost:9000"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

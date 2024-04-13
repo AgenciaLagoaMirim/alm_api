@@ -2,6 +2,7 @@ from rest_framework import routers
 
 from .views import (
     CustomViewSet,
+    # CustomViewSetTeste,
     StationReadingsModelViewSet,
     StationReadingsSensorsModelViewSet,
     StationStationModelViewSet,
@@ -24,3 +25,4 @@ data_dash_router.register(
     "station-sensors", StationSensorsModelViewSet, basename="station-sensors"
 )
 data_dash_router.register("custom-viewset", CustomViewSet, basename="custom-viewset")
+# data_dash_router.register("custom-viewset-teste", CustomViewSetTeste, basename="custom-viewset-teste")
