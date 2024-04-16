@@ -1,6 +1,5 @@
 from datetime import datetime
-import requests
-from django.http import HttpResponse
+
 
 from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
@@ -43,15 +42,10 @@ class StationStationModelViewSet(viewsets.ModelViewSet):
 class CustomViewSet(viewsets.ViewSet):
 
     # DUAL BASE -
-    def dualBase_url_via_get(self, url):
-        print("------------------------------------------")
-        print(url)
-        print("------------------------------------------")
+    def dualBase_url_via_get(url):
         try:
             # Faz a requisição GET para a URL fornecida
-            print("Antes do response")
             response = requests.get(url)
-            print("depois do response")
 
             # Verifica se a requisição foi bem sucedida (código de status 200)
             if response.status_code == 200:
@@ -69,7 +63,6 @@ class CustomViewSet(viewsets.ViewSet):
     # Altera dos dados POST para
     # http://recepcao.dualbase.com.br/recep/recep.php?cmd=UFP_03:data=7-4-2024_9-00,TA_AVG=nan,TA_MIN=nan,TA_MAX=nan,XR_AVG=0,XR_MIN=0,XR_MAX=0,PA_AVG=1011.77,PA_MIN=1011.58,PA_MAX=1012.06,US=0.264861,UD=162.854,PP=0,HG_AVG=nan,HG_MIN=nan,HG_MAX=nan,HG_02_AVG=nan,HG_02_MIN=nan,HG_02_MAX=nan,TW=0,VB=14.1410:89550680247000764359:VTransDBv2.4:0
     #
-
     def criar_url(self, query_dict):  # AQUI FOI MUDADO
         query_dict_copy = (
             query_dict.copy()
@@ -112,6 +105,7 @@ class CustomViewSet(viewsets.ViewSet):
         servidor_DualBase = "http://recepcao.dualbase.com.br/recep/recep.php"
         footer_DualBase = ":89550680247000764359:VTransDBv2.4:0"
 
+        print(servidor_DualBase + junta + footer_DualBase)
         retorno = servidor_DualBase + junta + footer_DualBase
 
         #
@@ -124,6 +118,8 @@ class CustomViewSet(viewsets.ViewSet):
         # print (retorno)
 
         return retorno
+
+        # return dados
 
     ##############################################
     def can_be_stored_as_double(self, value):
@@ -147,14 +143,12 @@ class CustomViewSet(viewsets.ViewSet):
         )  # Obtém o nome da estação dos dados recebidos
         print(station_name)
         print("*******Dados**************")
-
         url = self.criar_url(dados)  # AQUI FOI MUDADO REFERENCIANDO SELF
-        # print(url)
-        self.dualBase_url_via_get(url)
-
+        print(f"TESTE {url}")
+        # print(dados)
         # print(dualBase_url_via_get(url))
         # print(criar_url(url))
-        # print(criar_url(url))
+        # self.criar_url(url)
         print("*******Fim Dados**************")
 
         if station_name:
@@ -191,9 +185,7 @@ class CustomViewSet(viewsets.ViewSet):
                 # Salva a instância de StationReadings no banco de dados
                 station_reading.save()
                 # curl -X POST  http://185.137.92.73:8080/recebe/custom/ -d '!BDBSD=UFP_03&data=8-3-2024_10_5&TA_MIN=14&TA_AVG=21&TA_MAX=32&VB=12.3&TW=112'
-
-                # print(dados)
-
+                print(dados)
                 # for i in dados.items():
                 #   print(f"var = {i[1]}")
                 for indice, (chave, valor) in enumerate(dados.items()):
