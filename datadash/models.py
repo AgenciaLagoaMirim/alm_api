@@ -36,15 +36,17 @@ class StationSensors(models.Model):
 
 
 class StationReadingsSensors(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    data_value = models.DecimalField(
+        max_digits=10, decimal_places=3, blank=True, null=True
+    )
     reading = models.ForeignKey(
         StationReadings, models.DO_NOTHING, blank=True, null=True
     )
     sensor = models.ForeignKey(
         "StationSensors", models.DO_NOTHING, blank=True, null=True
     )
-    data_value = models.DecimalField(
-        max_digits=10, decimal_places=3, blank=True, null=True
-    )
 
     class Meta:
+        managed = False
         db_table = "station_readings_sensors"
