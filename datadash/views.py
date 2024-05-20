@@ -6,6 +6,8 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from .pagination import StationReadingsPagination
+
 from .models import (
     StationReadings,
     StationReadingsSensors,
@@ -28,6 +30,7 @@ class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
 class StationReadingsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadings.objects.all()
     serializer_class = StationReadingsSerializer
+    pagination_class = StationReadingsPagination
 
 
 class StationSensorsModelViewSet(viewsets.ModelViewSet):

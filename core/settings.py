@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # apps
     "accounts.apps.AccountsConfig",
     "datadash.apps.DatadashConfig",
+    "stamvi.apps.StamviConfig",
 ]
 
 MIDDLEWARE = [
@@ -64,7 +65,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://localhost:9000"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://localhost:9000",
+    "http://localhost:9001",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -72,6 +77,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
 }
 
 
