@@ -5,9 +5,18 @@ CustomUser = get_user_model()
 
 
 class StationStation(models.Model):
+    STATION_TYPE_CHOICES = (
+        ("0", "Teste"),
+        ("1", "Solar"),
+        ("2", "SL500"),
+        ("3", "DualBase"),
+    )
     name = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     user = models.ForeignKey(CustomUser, models.DO_NOTHING, blank=True, null=True)
+    type = models.CharField(
+        max_length=1, choices=STATION_TYPE_CHOICES, blank=False, null=False
+    )
 
     class Meta:
         db_table = "station_station"

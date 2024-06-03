@@ -25,12 +25,12 @@ from .serializers import (
 class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadingsSensors.objects.all()
     serializer_class = StationReadingsSensorsSerializer
+    pagination_class = StationReadingsPagination
 
 
 class StationReadingsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadings.objects.all()
     serializer_class = StationReadingsSerializer
-    pagination_class = StationReadingsPagination
 
 
 class StationSensorsModelViewSet(viewsets.ModelViewSet):
