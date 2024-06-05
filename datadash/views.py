@@ -6,8 +6,7 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from .pagination import StationReadingsPagination
-
+from .pagination import StationReadingsPagination, StationReadingsSensorsPagination
 from .models import (
     StationReadings,
     StationReadingsSensors,
@@ -25,12 +24,13 @@ from .serializers import (
 class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadingsSensors.objects.all()
     serializer_class = StationReadingsSensorsSerializer
-    pagination_class = StationReadingsPagination
+    pagination_class = StationReadingsSensorsPagination
 
 
 class StationReadingsModelViewSet(viewsets.ModelViewSet):
     queryset = StationReadings.objects.all()
     serializer_class = StationReadingsSerializer
+    pagination_class = StationReadingsPagination
 
 
 class StationSensorsModelViewSet(viewsets.ModelViewSet):
@@ -227,3 +227,55 @@ class CustomViewSet(viewsets.ViewSet):
                 {"message": "Nome da estação não fornecido"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class UserStationStationViewSet(viewsets.ModelViewSet):
+    serializer_class = StationStationSerializer
+
+    def get_queryset(self):
+        """
+        Retorna uma lista com todas as estações
+        associadas ao usuário logado
+        """
+        user = self.request.user
+
+        return StationStation.objects.filter(user=user.id)
+
+
+class UserStationReadingsViewSet(viewsets.ModelViewSet):
+    serializer_class = StationReadingsSerializer
+
+    def get_queryset(self):
+        """
+        Retorna uma lista com todas as  leituras das estações associadas ao
+        usuário logado.
+        """
+        user_stations = StationStation.objects.filter(user=self.request.user)
+        return StationReadings.objects.filter(station__in=user_stations)
+
+
+class UserStationSensorsViewSet(viewsets.ModelViewSet):
+    serializer_class = StationSensorsSerializer
+
+    def get_queryset(self):
+        """
+        Retorna uma lista com todas as sensores associadas as
+        estações do usuário logado.
+        """
+        user_stations = StationStation.objects.filter(user=self.request.user)
+        return StationSensors.objects.filter(station__in=user_stations)
+
+
+class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
+    serializer_class = StationReadingsSensorsSerializer
+
+    def get_queryset(self):
+        user_stations = StationStation.objects.filter(user=self.request.user)
+        user_station_readings = StationReadings.objects.filter(
+            station__in=user_stations
+        )
+        user_sensors_readings = StationSensors.objects.filter(station__in=user_stations)
+
+        return StationReadingsSensors.objects.filter(
+            reading__in=user_station_readings, sensor__in=user_sensors_readings
+        )

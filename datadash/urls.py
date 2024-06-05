@@ -2,11 +2,14 @@ from rest_framework import routers
 
 from .views import (
     CustomViewSet,
-    # CustomViewSetTeste,
     StationReadingsModelViewSet,
     StationReadingsSensorsModelViewSet,
     StationStationModelViewSet,
     StationSensorsModelViewSet,
+    UserStationStationViewSet,
+    UserStationReadingsViewSet,
+    UserStationSensorsViewSet,
+    UserStationReadingsSensorsViewSet,
 )
 
 data_dash_router = routers.DefaultRouter()
@@ -25,4 +28,23 @@ data_dash_router.register(
     "station-sensors", StationSensorsModelViewSet, basename="station-sensors"
 )
 data_dash_router.register("custom-viewset", CustomViewSet, basename="custom-viewset")
-# data_dash_router.register("custom-viewset-teste", CustomViewSetTeste, basename="custom-viewset-teste")
+
+data_dash_router.register(
+    "user-station-stations", UserStationStationViewSet, basename="user-station-stations"
+)
+
+data_dash_router.register(
+    "user-station-readings",
+    UserStationReadingsViewSet,
+    basename="user-station-readings",
+)
+
+data_dash_router.register(
+    "user-station-sensors", UserStationSensorsViewSet, basename="user-station-sensors"
+)
+
+data_dash_router.register(
+    "user-station-readings-sensors",
+    UserStationReadingsSensorsViewSet,
+    basename="user-station-reading-sensors",
+)
