@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .pagination import StationReadingsPagination, StationReadingsSensorsPagination
 from .models import (
@@ -22,23 +23,27 @@ from .serializers import (
 
 
 class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = StationReadingsSensors.objects.all()
     serializer_class = StationReadingsSensorsSerializer
     pagination_class = StationReadingsSensorsPagination
 
 
 class StationReadingsModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = StationReadings.objects.all()
     serializer_class = StationReadingsSerializer
     pagination_class = StationReadingsPagination
 
 
 class StationSensorsModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = StationSensors.objects.all()
     serializer_class = StationSensorsSerializer
 
 
 class StationStationModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = StationStation.objects.all()
     serializer_class = StationStationSerializer
 
@@ -52,9 +57,7 @@ class CustomViewSet(viewsets.ViewSet):
         print("------------------------------------------")
         try:
             # Faz a requisição GET para a URL fornecida
-            print("Antes do response")
             response = requests.get(url)
-            print("depois do response")
 
             # Verifica se a requisição foi bem sucedida (código de status 200)
             if response.status_code == 200:
@@ -129,6 +132,7 @@ class CustomViewSet(viewsets.ViewSet):
         return retorno
 
     ##############################################
+
     def can_be_stored_as_double(self, value):
         try:
             # Tenta converter o valor para float
@@ -150,10 +154,13 @@ class CustomViewSet(viewsets.ViewSet):
         )  # Obtém o nome da estação dos dados recebidos
         print(station_name)
         print("*******Dados**************")
+        # print(dados)
+        print("*******Dados fim!**************")
 
-        url = self.criar_url(dados)  # AQUI FOI MUDADO REFERENCIANDO SELF
-        # print(url)
-        self.dualBase_url_via_get(url)
+        if station_name != "TESTE000000000":
+            url = self.criar_url(dados)  # AQUI FOI MUDADO REFERENCIANDO SELF
+            print(url)
+            self.dualBase_url_via_get(url)
 
         # print(dualBase_url_via_get(url))
         # print(criar_url(url))
@@ -191,32 +198,40 @@ class CustomViewSet(viewsets.ViewSet):
                 station_reading = StationReadings(
                     station=station_instance, time_measure=data_hora_formatada
                 )
-                # Salva a instância de StationReadings no banco de dados
-                station_reading.save()
-                # curl -X POST  http://185.137.92.73:8080/recebe/custom/ -d '!BDBSD=UFP_03&data=8-3-2024_10_5&TA_MIN=14&TA_AVG=21&TA_MAX=32&VB=12.3&TW=112'
+                try:
+                    # Salva a instância de StationReadings no banco de dados
+                    station_reading.save()
 
-                # print(dados)
+                    # curl -X POST  http://185.137.92.73:8080/recebe/custom/ -d '!BDBSD=UFP_03&data=8-3-2024_10_5&TA_MIN=14&TA_AVG=21&TA_MAX=32&VB=12.3&TW=112'
 
-                # for i in dados.items():
-                #   print(f"var = {i[1]}")
-                for indice, (chave, valor) in enumerate(dados.items()):
-                    if indice > 1:
-                        print(f"Chave: {chave}, Valor: {valor}")
-                        if self.can_be_stored_as_double(valor):
-                            valor = valor
-                        else:
-                            valor = None
-                        station_sensor = StationSensors.objects.get(
-                            code=chave, station=station_instance
-                        )
+                    # print(dados)
 
-                        station_reading_sensor = StationReadingsSensors.objects.create(
-                            reading=station_reading,
-                            sensor=station_sensor,
-                            data_value=valor,
-                        )
-                return Response(data_hora_formatada)
+                    # for i in dados.items():
+                    #   print(f"var = {i[1]}")
+                    for indice, (chave, valor) in enumerate(dados.items()):
+                        if indice > 1:
+                            print(f"Chave: {chave}, Valor: {valor}")
+                            if self.can_be_stored_as_double(valor):
+                                valor = valor
+                            else:
+                                valor = None
+                            station_sensor = StationSensors.objects.get(
+                                code=chave, station=station_instance
+                            )
 
+                            station_reading_sensor = (
+                                StationReadingsSensors.objects.create(
+                                    reading=station_reading,
+                                    sensor=station_sensor,
+                                    data_value=valor,
+                                )
+                            )
+
+                    return Response(data_hora_formatada)
+
+                except IntegrityError:
+                    print("Esta leitura da estação já existe no banco de dados.")
+                    return Response(data_hora_formatada)
             except StationStation.DoesNotExist:
                 return Response(
                     {"message": "Estação não encontrada"},
