@@ -156,11 +156,10 @@ class CustomViewSet(viewsets.ViewSet):
         print("*******Dados**************")
         # print(dados)
         print("*******Dados fim!**************")
-
-        if station_name != "TESTE000000000":
-            url = self.criar_url(dados)  # AQUI FOI MUDADO REFERENCIANDO SELF
-            print(url)
-            self.dualBase_url_via_get(url)
+        # station_save = StationStation.objects.get(name=station_name)
+        # print(f"TESTE {station_save}")
+        # station_type = station_save.get("type")
+        # print(f"STATION TYPE {station_type}")
 
         # print(dualBase_url_via_get(url))
         # print(criar_url(url))
@@ -174,7 +173,14 @@ class CustomViewSet(viewsets.ViewSet):
                 station_reading_time_measure = dados.get(
                     "data"
                 )  # RECEBE da estacao a data que o dado foi lido
+                station_instance_type = station_instance.type
+                print(f"TESTE {station_instance_type}")
 
+                # TRATA RECEBIMENTO DOS EQUIPAMENTOS DE ACORD0 COM O TIPO
+                if station_instance_type == "3":
+                    url = self.criar_url(dados)  # AQUI FOI MUDADO REFERENCIANDO SELF
+                    print(url)
+                    self.dualBase_url_via_get(url)
                 # print("**********************")
                 print(station_reading_time_measure)
                 # print("************************")
