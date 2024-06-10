@@ -9,3 +9,13 @@ class StationReadingsSensorsPagination(PageNumberPagination):
 class StationReadingsPagination(PageNumberPagination):
     page_size = 500
     page_size_query_param = "size"
+
+
+class UserStationReadingsSensorsPagination(PageNumberPagination):
+    page_size = 500
+    page_size_query_param = "size"
+
+
+class UserStationReadingsPagination(PageNumberPagination):
+    page_size = 500
+    page_size_query_param = "size"

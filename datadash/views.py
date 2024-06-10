@@ -7,7 +7,12 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .pagination import StationReadingsPagination, StationReadingsSensorsPagination
+from .pagination import (
+    StationReadingsPagination,
+    StationReadingsSensorsPagination,
+    UserStationReadingsPagination,
+    UserStationReadingsSensorsPagination,
+)
 from .models import (
     StationReadings,
     StationReadingsSensors,
@@ -300,3 +305,36 @@ class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
         return StationReadingsSensors.objects.filter(
             reading__in=user_station_readings, sensor__in=user_sensors_readings
         )
+
+
+class UserDataSetViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    http_method_names = ["get"]
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+
+        stations = StationStation.objects.filter(user=user)
+        stations_serializer = StationStationSerializer(stations, many=True)
+
+        readings = StationReadings.objects.filter(station__user=user)
+        station_readings_serializer = StationReadingsSerializer(readings, many=True)
+
+        sensors = StationSensors.objects.filter(station__user=user)
+        station_sensors_serializer = StationSensorsSerializer(sensors, many=True)
+
+        readings_sensors = StationReadingsSensors.objects.filter(
+            reading__station__user=user
+        )
+        station_readings_sensors_serializer = StationReadingsSensorsSerializer(
+            readings_sensors, many=True
+        )
+
+        response_data = {
+            "stations": stations_serializer.data,
+            "readings": station_readings_serializer.data,
+            "sensors": station_sensors_serializer.data,
+            "readings_sensors": station_readings_sensors_serializer.data,
+        }
+
+        return Response(response_data)

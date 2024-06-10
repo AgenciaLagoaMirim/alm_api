@@ -11,8 +11,8 @@ from datadash.urls import data_dash_router
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/data-dash/", include(data_dash_router.urls)),
-    path("api/v1/accounts/", include("djoser.urls")),
-    path("api/v1/accounts/", include("djoser.urls.authtoken")),
+    path("api/v1/", include("djoser.urls")),
+    path("api/v1/", include("djoser.urls.authtoken")),
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/v1/schema/swagger-ui/",
