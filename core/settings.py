@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     # apps
     "accounts.apps.AccountsConfig",
     "datadash.apps.DatadashConfig",
+    "sl500_dd.apps.Sl500DdConfig",
 ]
 
 MIDDLEWARE = [
