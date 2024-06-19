@@ -6,6 +6,8 @@ from drf_spectacular.views import (
 )
 from django.urls import include, path
 
+# from djoser import views as djoser_views
+
 from datadash.urls import data_dash_router
 
 urlpatterns = [

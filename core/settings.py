@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     # apps
     "accounts.apps.AccountsConfig",
     "datadash.apps.DatadashConfig",
-    "stamvi.apps.StamviConfig",
 ]
 
 MIDDLEWARE = [
@@ -82,11 +81,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
 }
 
+DOMAIN = "127.0.0.1:9000"
+SITE_NAME = "ALM - Data Dash System"
+PASSWORD_RESET_URL = "user-reset-account-confirm/{uid}/{token}"
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": PASSWORD_RESET_URL,
+    "DOMAIN": DOMAIN,
+    "SITE_NAME": SITE_NAME,
+    "EMAIL": {
+        "password_reset": "accounts.email.CustomPasswordResetEmail",
+        "password_change_confirmation": "djoser.email.PasswordChangeConfirmationEmail",
+    },
+}
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR, BASE_DIR.joinpath("templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -164,3 +175,11 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")

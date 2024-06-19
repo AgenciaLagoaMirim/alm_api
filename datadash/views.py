@@ -12,6 +12,7 @@ from .pagination import (
     StationReadingsSensorsPagination,
     UserStationReadingsPagination,
     UserStationReadingsSensorsPagination,
+    UserDataSetPagination,
 )
 from .models import (
     StationReadings,
@@ -25,6 +26,8 @@ from .serializers import (
     StationSensorsSerializer,
     StationStationSerializer,
 )
+
+from .permissions import IsInGroupGeneralOrReadyOnly
 
 
 class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
@@ -270,6 +273,7 @@ class UserStationStationViewSet(viewsets.ModelViewSet):
 
 class UserStationReadingsViewSet(viewsets.ModelViewSet):
     serializer_class = StationReadingsSerializer
+    pagination_class = UserStationReadingsPagination
 
     def get_queryset(self):
         """
@@ -309,7 +313,8 @@ class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
 
 class UserDataSetViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    http_method_names = ["get"]
+    pagination_class = UserDataSetPagination
+    # http_method_names = ["get"]
 
     def list(self, request, *args, **kwargs):
         user = request.user
@@ -338,3 +343,16 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
         }
 
         return Response(response_data)
+
+
+class GeneralStationStationView(viewsets.ViewSet):
+    queryset = StationStation.objects.all()
+    serializer_class = StationSensorsSerializer
+    permission_classes = [IsAuthenticated, IsInGroupGeneralOrReadyOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return StationReadings.objects.all()
+        else:
+            return StationStation.objects.filter(groups__name="general")
