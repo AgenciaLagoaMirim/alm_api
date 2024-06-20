@@ -1,0 +1,163 @@
+{
+  "count": 34289,
+  "next": "http://127.0.0.1:8000/api/v1/data-dash/sl500-dd/sl500-data-set/?page=2",
+  "previous": null,
+  "results": {
+      "sl500": [
+          {
+              "id": 735,
+              "renamed_data": {
+                  "Id": 735,
+                  "Data": "2024-02-09T19:05:26+00:00",
+                  "VEL_X(cm/s)": 40.8,
+                  "VEL_Y(cm/s)": 1.5,
+                  "LEVEL(m)": 1.13,
+                  "VelStDev1/X/E (cm/s)": 0.2,
+                  "VelStDev2/Y/N (cm/s)": 0.0,
+                  "VelStDev3/Z/U (cm/s)": 10.0,
+                  "SignalAmp1 (counts)": 107,
+                  "SignalAmp2 (counts)": 112,
+                  "SignalAmp3 (counts)": 212,
+                  "Ice Detection": 0,
+                  "Heading (deg)": 284.0,
+                  "Pitch (deg)": 4.0,
+                  "Roll (deg)": -3.6,
+                  "Standard deviation of the Heading (deg)": 0.0,
+                  "Standard deviation of the Pitch (deg)": 0.0,
+                  "Standard deviation of the Roll (deg)": 0.0,
+                  "Mean Tempr (degC)": 27.5,
+                  "MeanPress (dBar)": 1.23,
+                  "StDevPress (dBar)": 0.006,
+                  "Power level (battery voltage) (Volts)": 13.4,
+                  "CellBegin (m)": 1.5,
+                  "CellEnd (m)": -119.5,
+                  "Noise 1": 30,
+                  "Noise 2": 33,
+                  "Noise 3": 22,
+                  "Data Safe": "2024-02-09T19:05:26+00:00",
+                  "Local Date": "2024-02-09T15:52:23+00:00",
+                  "Station": 5
+              }
+          }
+      ],
+      "sl500p": [
+            {
+                "id": 6686,
+                "renamed_data": {
+                    "Id": 6686,
+                    "Parcial Id": 735,
+                    "Cell": 2,
+                    "Vx (cm/s)": 61.4,
+                    "Errx(cms/s)": 7.7,
+                    "Erry (cm/s)": 0.6,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 126
+                }
+            },
+            {
+                "id": 6687,
+                "renamed_data": {
+                    "Id": 6687,
+                    "Parcial Id": 735,
+                    "Cell": 3,
+                    "Vx (cm/s)": 65.1,
+                    "Errx(cms/s)": 7.0,
+                    "Erry (cm/s)": 0.6,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 117
+                }
+            },
+            {
+                "id": 6688,
+                "renamed_data": {
+                    "Id": 6688,
+                    "Parcial Id": 735,
+                    "Cell": 4,
+                    "Vx (cm/s)": 68.6,
+                    "Errx(cms/s)": 6.0,
+                    "Erry (cm/s)": 0.7,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 109
+                }
+            },
+            {
+                "id": 6689,
+                "renamed_data": {
+                    "Id": 6689,
+                    "Parcial Id": 735,
+                    "Cell": 5,
+                    "Vx (cm/s)": 61.4,
+                    "Errx(cms/s)": 5.2,
+                    "Erry (cm/s)": 0.7,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 102
+                }
+            },
+            {
+                "id": 6690,
+                "renamed_data": {
+                    "Id": 6690,
+                    "Parcial Id": 735,
+                    "Cell": 6,
+                    "Vx (cm/s)": 54.2,
+                    "Errx(cms/s)": 3.2,
+                    "Erry (cm/s)": 0.7,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 96
+                }
+            },
+            {
+                "id": 6691,
+                "renamed_data": {
+                    "Id": 6691,
+                    "Parcial Id": 735,
+                    "Cell": 7,
+                    "Vx (cm/s)": 34.3,
+                    "Errx(cms/s)": -2.9,
+                    "Erry (cm/s)": 0.7,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 91
+                }
+            },
+            {
+                "id": 6692,
+                "renamed_data": {
+                    "Id": 6692,
+                    "Parcial Id": 735,
+                    "Cell": 8,
+                    "Vx (cm/s)": 16.6,
+                    "Errx(cms/s)": -5.8,
+                    "Erry (cm/s)": 0.6,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 88
+                }
+            },
+            {
+                "id": 6693,
+                "renamed_data": {
+                    "Id": 6693,
+                    "Parcial Id": 735,
+                    "Cell": 9,
+                    "Vx (cm/s)": 22.8,
+                    "Errx(cms/s)": -1.1,
+                    "Erry (cm/s)": 0.5,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 85
+                }
+            },
+            {
+                "id": 6694,
+                "renamed_data": {
+                    "Id": 6694,
+                    "Parcial Id": 735,
+                    "Cell": 10,
+                    "Vx (cm/s)": 15.0,
+                    "Errx(cms/s)": -2.3,
+                    "Erry (cm/s)": 0.5,
+                    "Amp1 (counts)": 0.2,
+                    "Amp2 (counts)": 83
+                }
+            }
+      ]
+  }
+}

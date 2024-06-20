@@ -131,7 +131,7 @@ class DjangoSession(models.Model):
 
 
 class Sl500(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.BigIntegerField()
     ano = models.IntegerField(blank=True, null=True)
     mes = models.IntegerField(blank=True, null=True)
     dia = models.IntegerField(blank=True, null=True)
@@ -165,6 +165,7 @@ class Sl500(models.Model):
     dado25 = models.IntegerField(blank=True, null=True)
     data_safe = models.DateTimeField()
     local_date = models.DateTimeField()
+    station_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -172,8 +173,8 @@ class Sl500(models.Model):
 
 
 class Sl500P(models.Model):
-    id = models.IntegerField()
-    principal = models.ForeignKey(Sl500, models.DO_NOTHING)
+    id = models.BigIntegerField()
+    principal_id = models.IntegerField()
     dado_0 = models.IntegerField()
     dado_1 = models.FloatField(blank=True, null=True)
     dado_2 = models.FloatField(blank=True, null=True)

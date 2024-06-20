@@ -1,8 +1,9 @@
 from django.db import models
+from datadash.models import StationStation
 
 
 class Sl500(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.BigIntegerField(primary_key=True)
     ano = models.IntegerField(blank=True, null=True)
     mes = models.IntegerField(blank=True, null=True)
     dia = models.IntegerField(blank=True, null=True)
@@ -36,20 +37,23 @@ class Sl500(models.Model):
     dado25 = models.IntegerField(blank=True, null=True)
     data_safe = models.DateTimeField()
     local_date = models.DateTimeField()
+    station = models.ForeignKey(
+        StationStation, models.DO_NOTHING, blank=True, null=True
+    )
 
     class Meta:
         db_table = "sl500"
 
 
 class Sl500P(models.Model):
-    id = models.IntegerField()
+    id = models.BigIntegerField(primary_key=True)
     principal = models.ForeignKey(Sl500, models.DO_NOTHING)
     dado_0 = models.IntegerField()
     dado_1 = models.FloatField(blank=True, null=True)
     dado_2 = models.FloatField(blank=True, null=True)
     dado_3 = models.FloatField(blank=True, null=True)
     dado_4 = models.FloatField(blank=True, null=True)
-    dado_5 = models.IntegerField(blank=True, null=True)
+    dado_5 = models.FloatField(blank=True, null=True)
     dado_6 = models.IntegerField(blank=True, null=True)
 
     class Meta:

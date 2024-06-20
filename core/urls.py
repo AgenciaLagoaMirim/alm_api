@@ -9,10 +9,12 @@ from django.urls import include, path
 # from djoser import views as djoser_views
 
 from datadash.urls import data_dash_router
+from sl500_dd.urls import sl500_dd_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/data-dash/", include(data_dash_router.urls)),
+    path("api/v1/data-dash/sl500-dd/", include(sl500_dd_router.urls)),
     path("api/v1/", include("djoser.urls")),
     path("api/v1/", include("djoser.urls.authtoken")),
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
