@@ -2,8 +2,8 @@ from django.db import models
 from datadash.models import StationStation
 
 
-class Sl500(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+class Sl500(models.Model): 
+    id = models.AutoField(primary_key=True)
     ano = models.IntegerField(blank=True, null=True)
     mes = models.IntegerField(blank=True, null=True)
     dia = models.IntegerField(blank=True, null=True)
@@ -46,7 +46,7 @@ class Sl500(models.Model):
 
 
 class Sl500P(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     principal = models.ForeignKey(Sl500, models.DO_NOTHING)
     dado_0 = models.IntegerField()
     dado_1 = models.FloatField(blank=True, null=True)
