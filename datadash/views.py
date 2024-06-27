@@ -1,3 +1,7 @@
+from .pagination import UserDataSetPagination
+from .serializers import DataSetSerializer
+from .models import CustomUser
+from rest_framework import viewsets
 from datetime import datetime
 import requests
 from django.http import HttpResponse
@@ -30,30 +34,30 @@ from .serializers import (
 from .permissions import IsInGroupGeneralOrReadyOnly
 
 
-class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = StationReadingsSensors.objects.all()
-    serializer_class = StationReadingsSensorsSerializer
-    pagination_class = StationReadingsSensorsPagination
+# class StationReadingsSensorsModelViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = StationReadingsSensors.objects.all()
+#     serializer_class = StationReadingsSensorsSerializer
+#     pagination_class = StationReadingsSensorsPagination
 
 
-class StationReadingsModelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = StationReadings.objects.all()
-    serializer_class = StationReadingsSerializer
-    pagination_class = StationReadingsPagination
+# class StationReadingsModelViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = StationReadings.objects.all()
+#     serializer_class = StationReadingsSerializer
+#     pagination_class = StationReadingsPagination
 
 
-class StationSensorsModelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = StationSensors.objects.all()
-    serializer_class = StationSensorsSerializer
+# class StationSensorsModelViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = StationSensors.objects.all()
+#     serializer_class = StationSensorsSerializer
 
 
-class StationStationModelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = StationStation.objects.all()
-    serializer_class = StationStationSerializer
+# class StationStationModelViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = StationStation.objects.all()
+#     serializer_class = StationStationSerializer
 
 
 class CustomViewSet(viewsets.ViewSet):
@@ -257,8 +261,7 @@ class CustomViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
-class UserStationStationViewSet(viewsets.ModelViewSet):
+    # class UserStationStationViewSet(viewsets.ModelViewSet):
     serializer_class = StationStationSerializer
 
     def get_queryset(self):
@@ -270,8 +273,7 @@ class UserStationStationViewSet(viewsets.ModelViewSet):
 
         return StationStation.objects.filter(user=user.id)
 
-
-class UserStationReadingsViewSet(viewsets.ModelViewSet):
+    # class UserStationReadingsViewSet(viewsets.ModelViewSet):
     serializer_class = StationReadingsSerializer
     pagination_class = UserStationReadingsPagination
 
@@ -283,8 +285,7 @@ class UserStationReadingsViewSet(viewsets.ModelViewSet):
         user_stations = StationStation.objects.filter(user=self.request.user)
         return StationReadings.objects.filter(station__in=user_stations)
 
-
-class UserStationSensorsViewSet(viewsets.ModelViewSet):
+    # class UserStationSensorsViewSet(viewsets.ModelViewSet):
     serializer_class = StationSensorsSerializer
 
     def get_queryset(self):
@@ -295,8 +296,7 @@ class UserStationSensorsViewSet(viewsets.ModelViewSet):
         user_stations = StationStation.objects.filter(user=self.request.user)
         return StationSensors.objects.filter(station__in=user_stations)
 
-
-class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
+    # class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
     serializer_class = StationReadingsSensorsSerializer
 
     def get_queryset(self):
@@ -311,40 +311,6 @@ class UserStationReadingsSensorsViewSet(viewsets.ModelViewSet):
         )
 
 
-class UserDataSetViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    pagination_class = UserDataSetPagination
-    # http_method_names = ["get"]
-
-    def list(self, request, *args, **kwargs):
-        user = request.user
-
-        stations = StationStation.objects.filter(user=user)
-        stations_serializer = StationStationSerializer(stations, many=True)
-
-        readings = StationReadings.objects.filter(station__user=user)
-        station_readings_serializer = StationReadingsSerializer(readings, many=True)
-
-        sensors = StationSensors.objects.filter(station__user=user)
-        station_sensors_serializer = StationSensorsSerializer(sensors, many=True)
-
-        readings_sensors = StationReadingsSensors.objects.filter(
-            reading__station__user=user
-        )
-        station_readings_sensors_serializer = StationReadingsSensorsSerializer(
-            readings_sensors, many=True
-        )
-
-        response_data = {
-            "stations": stations_serializer.data,
-            "readings": station_readings_serializer.data,
-            "sensors": station_sensors_serializer.data,
-            "readings_sensors": station_readings_sensors_serializer.data,
-        }
-
-        return Response(response_data)
-
-
 class GeneralStationStationView(viewsets.ViewSet):
     queryset = StationStation.objects.all()
     serializer_class = StationSensorsSerializer
@@ -356,3 +322,23 @@ class GeneralStationStationView(viewsets.ViewSet):
             return StationReadings.objects.all()
         else:
             return StationStation.objects.filter(groups__name="general")
+
+        return Response({"data_set": serialized_users.data})
+
+
+class UserDataSetViewSet(viewsets.ViewSet):
+    pagination_class = UserDataSetPagination
+
+    def list(self, request):
+        paginator = UserDataSetPagination()
+        user_objects = CustomUser.objects.all().order_by("id")
+        user_page = paginator.paginate_queryset(user_objects, request)
+
+        print(f"User_page : {user_page}")
+
+        data_set_serializer = DataSetSerializer({"data_set": user_page}, many=True)
+
+        print(f"data_set_serializer.data: {data_set_serializer.data}")
+
+        response_data = data_set_serializer.data
+        return paginator.get_paginated_response(response_data)

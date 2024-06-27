@@ -47,7 +47,7 @@ class Sl500(models.Model):
 
 class Sl500P(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    principal = models.ForeignKey(Sl500, models.DO_NOTHING)
+    principal = models.ForeignKey(Sl500, models.DO_NOTHING, related_name="sl500p_set")
     dado_0 = models.IntegerField()
     dado_1 = models.FloatField(blank=True, null=True)
     dado_2 = models.FloatField(blank=True, null=True)

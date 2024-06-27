@@ -13,7 +13,9 @@ class StationStation(models.Model):
     )
     name = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    user = models.ForeignKey(CustomUser, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(
+        CustomUser, models.DO_NOTHING, blank=True, null=True, related_name="stations"
+    )
     type = models.CharField(
         max_length=1, choices=STATION_TYPE_CHOICES, blank=False, null=False
     )
@@ -24,7 +26,11 @@ class StationStation(models.Model):
 
 class StationReadings(models.Model):
     station = models.ForeignKey(
-        "StationStation", models.DO_NOTHING, blank=True, null=True
+        StationStation,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name="readings",
     )
     time_measure = models.DateTimeField(blank=True, null=True)
 
@@ -34,7 +40,7 @@ class StationReadings(models.Model):
 
 class StationSensors(models.Model):
     station = models.ForeignKey(
-        "StationStation", models.DO_NOTHING, blank=True, null=True
+        StationStation, models.DO_NOTHING, blank=True, null=True, related_name="sensors"
     )
     code = models.CharField(max_length=10, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -50,10 +56,18 @@ class StationReadingsSensors(models.Model):
         max_digits=10, decimal_places=3, blank=True, null=True
     )
     reading = models.ForeignKey(
-        StationReadings, models.DO_NOTHING, blank=True, null=True
+        StationReadings,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name="station_readings",
     )
     sensor = models.ForeignKey(
-        "StationSensors", models.DO_NOTHING, blank=True, null=True
+        StationSensors,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name="station_sensors",
     )
 
     class Meta:

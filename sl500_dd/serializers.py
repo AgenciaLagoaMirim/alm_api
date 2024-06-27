@@ -3,14 +3,51 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Sl500, Sl500P
 
 
+class Sl500PSerializer(ModelSerializer):
+    cell_data = SerializerMethodField()
+
+    class Meta:
+        model = Sl500P
+        fields = ["id", "cell_data"]
+
+    def get_cell_data(self, obj):
+        column_names = [
+            "Id",
+            "Parcial Id",
+            "Cell",
+            "Vx (cm/s)",
+            "Errx(cms/s)",
+            "Erry (cm/s)",
+            "Amp1 (counts)",
+            "Amp2 (counts)",
+        ]
+
+        data_values = [
+            obj.id,
+            obj.principal.id,
+            obj.dado_0,
+            obj.dado_1,
+            obj.dado_2,
+            obj.dado_3,
+            obj.dado_4,
+            obj.dado_5,
+            obj.dado_6,
+        ]
+
+        sl500_data_set = dict(zip(column_names, data_values))
+
+        return sl500_data_set
+
+
 class Sl500Serializer(ModelSerializer):
-    renamed_data = SerializerMethodField()
+    sl500_data = SerializerMethodField()
+    cells_data_set = Sl500PSerializer(many=True, read_only=True, source="sl500p_set")
 
     class Meta:
         model = Sl500
-        fields = ["id", "renamed_data"]
+        fields = ["id", "sl500_data", "cells_data_set"]
 
-    def get_renamed_data(self, obj):
+    def get_sl500_data(self, obj):
         column_names = [
             "Id",
             "Data",
@@ -77,42 +114,6 @@ class Sl500Serializer(ModelSerializer):
         ]
 
         # Mapeia os nomes das colunas para os dados
-        renamed_data = dict(zip(column_names, data_values))
+        sl500_data = dict(zip(column_names, data_values))
 
-        return renamed_data
-
-
-class Sl500PSerializer(ModelSerializer):
-    renamed_data = SerializerMethodField()
-
-    class Meta:
-        model = Sl500P
-        fields = ["id", "renamed_data"]
-
-    def get_renamed_data(self, obj):
-        column_names = [
-            "Id",
-            "Parcial Id",
-            "Cell",
-            "Vx (cm/s)",
-            "Errx(cms/s)",
-            "Erry (cm/s)",
-            "Amp1 (counts)",
-            "Amp2 (counts)",
-        ]
-
-        data_values = [
-            obj.id,
-            obj.principal.id,
-            obj.dado_0,
-            obj.dado_1,
-            obj.dado_2,
-            obj.dado_3,
-            obj.dado_4,
-            obj.dado_5,
-            obj.dado_6,
-        ]
-
-        renamed_data = dict(zip(column_names, data_values))
-
-        return renamed_data
+        return sl500_data

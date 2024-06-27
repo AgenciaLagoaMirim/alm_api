@@ -22,5 +22,5 @@ class UserStationReadingsPagination(PageNumberPagination):
 
 
 class UserDataSetPagination(PageNumberPagination):
-    page_size = 500
+    page_size = 50
     page_size_query_param = "size"
