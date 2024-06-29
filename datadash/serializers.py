@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import (
+from django.contrib.auth import get_user_model
+from datadash.models import (
     StationStation,
     StationReadings,
     StationSensors,
     StationReadingsSensors,
 )
-from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
 
@@ -18,7 +18,7 @@ class StationReadingsSensorsSerializer(serializers.ModelSerializer):
 
 class StationSensorsSerializer(serializers.ModelSerializer):
     readings_sensors = StationReadingsSensorsSerializer(
-        many=True, read_only=True, source="station_readings"
+        many=True, read_only=True, source="station_readings_sensors_set"
     )
 
     class Meta:
@@ -27,11 +27,15 @@ class StationSensorsSerializer(serializers.ModelSerializer):
 
 
 class StationReadingsSerializer(serializers.ModelSerializer):
-    sensors = StationSensorsSerializer(many=True, read_only=True)
+    sensors = serializers.SerializerMethodField()
 
     class Meta:
         model = StationReadings
         fields = ["id", "time_measure", "station", "sensors"]
+
+    def get_sensors(self, obj):
+        sensors = StationSensors.objects.filter(station=obj.station)
+        return StationSensorsSerializer(sensors, many=True).data
 
 
 class StationStationSerializer(serializers.ModelSerializer):
@@ -43,9 +47,13 @@ class StationStationSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "location", "type", "user", "readings", "sensors"]
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class UserDataSetSerializer(serializers.ModelSerializer):
     stations = StationStationSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
         fields = ["id", "email", "stations"]
+
+
+class DataSetSerializer(serializers.Serializer):
+    data_set = UserDataSetSerializer(many=True)

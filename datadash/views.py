@@ -10,6 +10,7 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model
 
 from .pagination import (
     StationReadingsPagination,
@@ -326,6 +327,9 @@ class GeneralStationStationView(viewsets.ViewSet):
         return Response({"data_set": serialized_users.data})
 
 
+CustomUser = get_user_model()
+
+
 class UserDataSetViewSet(viewsets.ViewSet):
     pagination_class = UserDataSetPagination
 
@@ -334,11 +338,9 @@ class UserDataSetViewSet(viewsets.ViewSet):
         user_objects = CustomUser.objects.all().order_by("id")
         user_page = paginator.paginate_queryset(user_objects, request)
 
-        print(f"User_page : {user_page}")
+        # Serializa os dados corretamente
+        data_set_serializer = DataSetSerializer({"data_set": user_page})
 
-        data_set_serializer = DataSetSerializer({"data_set": user_page}, many=True)
-
-        print(f"data_set_serializer.data: {data_set_serializer.data}")
-
+        # Envolve a resposta paginada
         response_data = data_set_serializer.data
         return paginator.get_paginated_response(response_data)
