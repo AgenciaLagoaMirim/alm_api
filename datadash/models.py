@@ -60,14 +60,14 @@ class StationReadingsSensors(models.Model):
         models.DO_NOTHING,
         blank=True,
         null=True,
-        related_name="station_readings",
+        related_name="readings_sensors",
     )
     sensor = models.ForeignKey(
         StationSensors,
         models.DO_NOTHING,
         blank=True,
         null=True,
-        related_name="station_sensors",
+        related_name="readings_sensors",
     )
 
     class Meta:

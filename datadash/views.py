@@ -335,7 +335,14 @@ class UserDataSetViewSet(viewsets.ViewSet):
 
     def list(self, request):
         paginator = UserDataSetPagination()
-        user_objects = CustomUser.objects.all().order_by("id")
+        user_objects = (
+            CustomUser.objects.all()
+            .order_by("id")
+            .prefetch_related(
+                "stations__readings__readings_sensors",
+                "stations__sensors__readings_sensors",
+            )
+        )
         user_page = paginator.paginate_queryset(user_objects, request)
 
         # Serializa os dados corretamente
