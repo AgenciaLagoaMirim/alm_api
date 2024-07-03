@@ -67,7 +67,7 @@ class StationReadingsSensors(models.Model):
         models.DO_NOTHING,
         blank=True,
         null=True,
-        related_name="readings_sensors",
+        related_name="sensors_readings",
     )
 
     class Meta:
