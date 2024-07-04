@@ -330,26 +330,32 @@ class GeneralStationStationView(viewsets.ViewSet):
 CustomUser = get_user_model()
 
 
-class UserDataSetViewSet(viewsets.ViewSet):
+class UserDataSetViewSet(viewsets.ModelViewSet):
+    queryset = StationStation.objects.all()
+    serializer_class = StationStationSerializer
     pagination_class = UserDataSetPagination
 
-    def list(self, request):
-        paginator = UserDataSetPagination()
-        user_objects = (
-            CustomUser.objects.all()
-            .order_by("id")
-            .prefetch_related(
-                "stations__readings__readings_sensors__sensor",
-                "stations__sensors__station_sensors__reading",
-            )
+    def get_queryset(self):
+        return StationStation.objects.filter(user=self.request.user).prefetch_related(
+            "readings",
+            "readings__station",
+            "readings__station__sensors",
+            "readings__station__sensors__sensors_readings",
         )
-        # "stations__readings__readings_sensors",
-        # "stations__sensors__sensors_readings",
-        user_page = paginator.paginate_queryset(user_objects, request)
 
-        # Serializa os dados corretamente
-        data_set_serializer = DataSetSerializer({"data_set": user_page})
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(
+            queryset, many=True, context={"request": request}
+        )
 
-        # Envolve a resposta paginada
-        response_data = data_set_serializer.data
-        return paginator.get_paginated_response(response_data)
+        # Construindo a resposta conforme a estrutura desejada
+        data_set = [
+            {
+                "id": request.user.id,
+                "user": request.user.email,
+                "stations": serializer.data,
+            }
+        ]
+
+        return Response({"data_set": data_set})

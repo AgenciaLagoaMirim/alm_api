@@ -18,7 +18,7 @@ class StationReadingsSensorsSerializer(serializers.ModelSerializer):
 
 class StationSensorsSerializer(serializers.ModelSerializer):
     readings_sensors = StationReadingsSensorsSerializer(
-        many=True, read_only=True, source="station_sensors"
+        many=True, read_only=True, source="sensors_readings"
     )
 
     class Meta:
@@ -27,11 +27,15 @@ class StationSensorsSerializer(serializers.ModelSerializer):
 
 
 class StationReadingsSerializer(serializers.ModelSerializer):
-    sensors = StationSensorsSerializer(many=True, read_only=True)
+    sensors = serializers.SerializerMethodField()
 
     class Meta:
         model = StationReadings
         fields = ["id", "time_measure", "station", "sensors"]
+
+    def get_sensors(self, obj):
+        sensors = StationSensors.objects.filter(station=obj.station)
+        return StationSensorsSerializer(sensors, many=True).data
 
 
 class StationStationSerializer(serializers.ModelSerializer):

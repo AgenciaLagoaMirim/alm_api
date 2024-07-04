@@ -54,3 +54,26 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class DataSetSerializer(serializers.Serializer):
     data_set = CustomUserSerializer(many=True)
+
+
+class UserDataSetViewSet(viewsets.ViewSet):
+    pagination_class = UserDataSetPagination
+
+    def list(self, request):
+        paginator = UserDataSetPagination()
+        user_objects = (
+            CustomUser.objects.all()
+            .order_by("id")
+            .prefetch_related(
+                "stations__readings__readings_sensors__sensor",
+                "stations__sensors__sensors_readings__reading",
+            )
+        )
+        user_page = paginator.paginate_queryset(user_objects, request)
+
+        # Serializa os dados corretamente
+        data_set_serializer = DataSetSerializer({"data_set": user_page})
+
+        # Envolve a resposta paginada
+        response_data = data_set_serializer.data
+        return paginator.get_paginated_response(response_data)
