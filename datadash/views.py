@@ -339,10 +339,12 @@ class UserDataSetViewSet(viewsets.ViewSet):
             CustomUser.objects.all()
             .order_by("id")
             .prefetch_related(
-                "stations__readings__readings_sensors",
-                "stations__sensors__readings_sensors",
+                "stations__readings__readings_sensors__sensor",
+                "stations__sensors__station_sensors__reading",
             )
         )
+        # "stations__readings__readings_sensors",
+        # "stations__sensors__sensors_readings",
         user_page = paginator.paginate_queryset(user_objects, request)
 
         # Serializa os dados corretamente

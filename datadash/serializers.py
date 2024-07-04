@@ -44,11 +44,14 @@ class StationStationSerializer(serializers.ModelSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    stations = StationStationSerializer(many=True, read_only=True)
+    stations = StationStationSerializer(
+        many=True, read_only=True, source="stationstation_set"
+    )
+    user = serializers.EmailField(source="email")
 
     class Meta:
         model = CustomUser
-        fields = ["id", "email", "stations"]
+        fields = ["id", "user", "stations"]
 
 
 class DataSetSerializer(serializers.Serializer):
