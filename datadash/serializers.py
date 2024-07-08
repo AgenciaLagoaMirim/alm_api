@@ -17,13 +17,19 @@ class StationReadingsSensorsSerializer(serializers.ModelSerializer):
 
 
 class StationSensorsSerializer(serializers.ModelSerializer):
-    readings_sensors = StationReadingsSensorsSerializer(
-        many=True, read_only=True, source="sensors_readings"
-    )
+    readings_sensors = serializers.SerializerMethodField()
 
     class Meta:
         model = StationSensors
-        fields = ["id", "code", "name", "unit_measure", "station", "readings_sensors"]
+        fields = ["id", "code", "name", "unit_measure", "readings_sensors"]
+
+    def get_readings_sensors(self, obj):
+        readings = self.context.get("readings")
+        if readings:
+            return StationReadingsSensorsSerializer(
+                obj.sensors_readings.filter(reading__in=readings), many=True
+            ).data
+        return []
 
 
 class StationReadingsSerializer(serializers.ModelSerializer):
@@ -31,16 +37,19 @@ class StationReadingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StationReadings
-        fields = ["id", "time_measure", "station", "sensors"]
+        fields = ["id", "time_measure", "sensors"]
 
     def get_sensors(self, obj):
-        sensors = StationSensors.objects.filter(station=obj.station)
-        return StationSensorsSerializer(sensors, many=True).data
+        sensors = StationSensors.objects.filter(
+            sensors_readings__reading=obj
+        ).distinct()
+        return StationSensorsSerializer(
+            sensors, many=True, context={"readings": [obj]}
+        ).data
 
 
 class StationStationSerializer(serializers.ModelSerializer):
     readings = StationReadingsSerializer(many=True, read_only=True)
-    # sensors = StationSensorsSerializer(many=True, read_only=True)
 
     class Meta:
         model = StationStation

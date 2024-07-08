@@ -71,5 +71,4 @@ class StationReadingsSensors(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "station_readings_sensors"
