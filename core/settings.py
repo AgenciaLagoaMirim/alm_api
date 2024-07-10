@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "185.137.92.73"]
 
 
 # Application definition
@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "datadash.apps.DatadashConfig",
     "sl500_dd.apps.Sl500DdConfig",
+    # Apoio da atualizacao com o GitHub
+    "gitwebhook",
 ]
 
 MIDDLEWARE = [
@@ -184,3 +186,6 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+
+
