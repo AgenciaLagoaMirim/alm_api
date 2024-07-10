@@ -15,7 +15,6 @@ import os
 SECRET = '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.'
 PROJECT_DIR = os.getenv('PROJECT_DIR')  # Variável já carregada do .env
 
-
 @csrf_exempt
 def webhook(request):
     if request.method == 'POST':
