@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 @csrf_exempt
 def webhook(request):
     if request.method == 'POST':
+        logger.info(f"Iniciando processo de atualizacao!")
         signature = 'sha1=' + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
         if not hmac.compare_digest(signature, request.headers.get('X-Hub-Signature', '')):
             return HttpResponseForbidden('Forbidden')
