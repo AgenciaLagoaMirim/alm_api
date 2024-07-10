@@ -13,7 +13,7 @@ import subprocess
 import os
 
 SECRET = '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.'
-PROJECT_DIR = os.getenv('PROJECT_DIR', '/home/alm_api/alm_api')  # Define um caminho padrão se a variável não estiver definida
+PROJECT_DIR = os.getenv('PROJECT_DIR')  # Variável já carregada do .env
 
 
 @csrf_exempt
