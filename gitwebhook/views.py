@@ -23,7 +23,7 @@ def webhook(request):
             return HttpResponseForbidden('Forbidden')
 
         # Altere para o diretório do projeto antes de executar o comando Git
-        os.chdir(PROJECT_DIR)
+        os.chdir('/home/alm_api/alm_api')
 
 
 
