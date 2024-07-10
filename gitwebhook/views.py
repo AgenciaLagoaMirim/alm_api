@@ -32,6 +32,7 @@ def webhook(request):
         os.chdir(PROJECT_DIR)
 
         logger.info(f"Current working directory: {os.getcwd()}")
+
         result = subprocess.run(['git', 'pull', 'origin', 'main'], capture_output=True, text=True)
 
         if result.returncode != 0:
