@@ -13,7 +13,8 @@ import subprocess
 import os
 
 SECRET = '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.'
-PROJECT_DIR = os.getenv('PROJECT_DIR')  # Variável já carregada do .env
+#PROJECT_DIR = os.getenv('PROJECT_DIR')  # Variável já carregada do .env
+PROJECT_DIR = '/home/alm_api/alm_api'  # Diretório fixo do projeto
 
 @csrf_exempt
 def webhook(request):
@@ -23,8 +24,9 @@ def webhook(request):
             return HttpResponseForbidden('Forbidden')
 
         # Altere para o diretório do projeto antes de executar o comando Git
-        os.chdir('/home/alm_api/alm_api')
-
+        #os.chdir('/home/alm_api/alm_api')
+        logger.info(f"Changing directory to: {PROJECT_DIR}")
+        os.chdir(PROJECT_DIR)
 
 
         # Comando Git para puxar as atualizações
