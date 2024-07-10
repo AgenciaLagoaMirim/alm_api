@@ -10,8 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 import hmac
 import hashlib
 import subprocess
+import os
 
 SECRET = '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.'
+PROJECT_DIR = os.getenv('PROJECT_DIR', '.')  # Define um caminho padrão se a variável não estiver definida
+
 
 @csrf_exempt
 def webhook(request):
@@ -19,6 +22,11 @@ def webhook(request):
         signature = 'sha1=' + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
         if not hmac.compare_digest(signature, request.headers.get('X-Hub-Signature', '')):
             return HttpResponseForbidden('Forbidden')
+
+        # Altere para o diretório do projeto antes de executar o comando Git
+        os.chdir(PROJECT_DIR)
+
+
 
         # Comando Git para puxar as atualizações
         subprocess.Popen(['git', 'pull', 'origin', 'main'])
