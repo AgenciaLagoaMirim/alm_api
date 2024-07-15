@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .models import (
     StationReadings,
@@ -13,13 +15,7 @@ from .models import (
     StationSensors,
     StationStation,
 )
-from .pagination import (
-    StationReadingsPagination,
-    StationReadingsSensorsPagination,
-    UserDataSetPagination,
-    UserStationReadingsPagination,
-    UserStationReadingsSensorsPagination,
-)
+from .pagination import BaseUserDataPaginationPagination
 from .permissions import IsInGroupGeneralOrReadyOnly
 from .serializers import (
     StationReadingsSensorsSerializer,
@@ -37,7 +33,9 @@ CustomUser = get_user_model()
 
 class UserStationStationViewSet(viewsets.ModelViewSet):
     serializer_class = UserStationStationSerializer
+    pagination_class = BaseUserDataPaginationPagination
 
+    @method_decorator(cache_page(60 * 15), name="get_queryset")
     def get_queryset(self):
         """
         Retorna uma lista com todas as estações
@@ -50,7 +48,7 @@ class UserStationStationViewSet(viewsets.ModelViewSet):
 
 class UserStationReadingsViewSet(viewsets.ModelViewSet):
     serializer_class = UserStationReadingsSerializer
-    pagination_class = UserStationReadingsPagination
+    pagination_class = BaseUserDataPaginationPagination
 
     def get_queryset(self):
         """
@@ -63,6 +61,7 @@ class UserStationReadingsViewSet(viewsets.ModelViewSet):
 
 class UserStationSensorsViewSet(viewsets.ModelViewSet):
     serializer_class = UserStationSensorsSerializer
+    pagination_class = BaseUserDataPaginationPagination
 
     def get_queryset(self):
         """
@@ -96,7 +95,11 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
 
     queryset = StationStation.objects.all()
     serializer_class = StationStationSerializer
-    pagination_class = UserDataSetPagination
+    pagination_class = BaseUserDataPaginationPagination
+
+    @method_decorator(cache_page(60 * 15), name="get_queryset")
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return StationStation.objects.filter(user=self.request.user).prefetch_related(
@@ -108,10 +111,22 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = self.get_serializer(
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(
+                queryset, many=True, context={"request": request}
+            )
+            data_set = [
+                {
+                    "id": request.user.id,
+                    "user": request.user.email,
+                    "stations": serializer.data,
+                }
+            ]
+            return self.get_paginated_response(data_set)
+        serialize = self.get_serializer(
             queryset, many=True, context={"request": request}
         )
-        # Construindo a resposta conforme a estrutura desejada
         data_set = [
             {
                 "id": request.user.id,
@@ -119,7 +134,6 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
                 "stations": serializer.data,
             }
         ]
-
         return Response({"data_set": data_set})
 
 
