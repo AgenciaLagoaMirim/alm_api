@@ -1,6 +1,7 @@
-from datetime import datetime
-
 import requests
+from datetime import datetime
+from rest_framework import filters as drf_filters
+from django_filters import rest_framework as django_filters
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from rest_framework import status, viewsets
@@ -9,6 +10,7 @@ from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
+from .filters import StationStationFilter
 from .models import (
     StationReadings,
     StationReadingsSensors,
@@ -34,7 +36,14 @@ CustomUser = get_user_model()
 class UserStationStationViewSet(viewsets.ModelViewSet):
     serializer_class = UserStationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
-    filter_backends = []
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        drf_filters.OrderingFilter,
+        drf_filters.SearchFilter,
+    ]
+    filterset_class = StationStationFilter
+    ordering_fields = ["readings__time_measure"]
+    search_fields = ["readings__time_measure"]
 
     def get_queryset(self):
         """
