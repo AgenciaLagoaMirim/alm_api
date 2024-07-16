@@ -34,16 +34,25 @@ CustomUser = get_user_model()
 class UserStationStationViewSet(viewsets.ModelViewSet):
     serializer_class = UserStationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
+    filter_backends = []
 
-    @method_decorator(cache_page(60 * 15), name="get_queryset")
     def get_queryset(self):
         """
         Retorna uma lista com todas as estações
         associadas ao usuário logado
         """
         user = self.request.user
+        print(f"USER ID: {user.id}")
+        queryset = StationStation.objects.filter(user=user.id)
 
-        return StationStation.objects.filter(user=user.id)
+        return queryset
+
+    @method_decorator(cache_page(60 * 15))
+    def list(self, request, *args, **kwargs):
+        print(f"Request {request}")
+        response = super().list(request, *args, **kwargs)
+        print(f"Response: { response}")
+        return response
 
 
 class UserStationReadingsViewSet(viewsets.ModelViewSet):

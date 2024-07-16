@@ -11,20 +11,25 @@ import subprocess
 import os
 import logging
 
-SECRET = '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.'
-PROJECT_DIR = '/home/alm_api/alm_api'  # Diretório fixo do projeto
+SECRET = "6}ry[Qp2)0d,=hL_^8doM8NB1JZ,."
+PROJECT_DIR = "/home/alm_api/alm_api"  # Diretório fixo do projeto
 
 logger = logging.getLogger(__name__)
 
+
 @csrf_exempt
 def webhook(request):
-    if request.method == 'POST':
+    if request.method == "POST":
 
         logger.info(f"Iniciando processo de atualizacao!")
 
-        signature = 'sha1=' + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
-        if not hmac.compare_digest(signature, request.headers.get('X-Hub-Signature', '')):
-            return HttpResponseForbidden('Forbidden')
+        signature = (
+            "sha1=" + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
+        )
+        if not hmac.compare_digest(
+            signature, request.headers.get("X-Hub-Signature", "")
+        ):
+            return HttpResponseForbidden("Forbidden")
 
         # Verifique se o diretório existe
         if not os.path.exists(PROJECT_DIR):
@@ -36,7 +41,9 @@ def webhook(request):
 
         logger.info(f"Current working directory: {os.getcwd()}")
 
-        result = subprocess.run(['git', 'pull', 'origin', 'main'], capture_output=True, text=True)
+        result = subprocess.run(
+            ["git", "pull", "origin", "main"], capture_output=True, text=True
+        )
 
         if result.returncode != 0:
             logger.error(f"Git pull failed: {result.stderr}")
