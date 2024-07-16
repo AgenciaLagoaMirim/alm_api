@@ -111,7 +111,7 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
     de acordo com com o usuário logado.
     """
 
-    queryset = StationStation.objects.all()
+    queryset = StationStation.objects.all().order_by("id")
     serializer_class = StationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
 
