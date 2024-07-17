@@ -125,7 +125,7 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
             "readings__station",
             "readings__station__sensors",
             "readings__station__sensors__sensors_readings",
-        )
+        ).order_by("id")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
