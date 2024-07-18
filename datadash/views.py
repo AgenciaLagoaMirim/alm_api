@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
+from django.core.cache import cache
 
 from .filters import StationStationFilter
 from .models import (
@@ -112,17 +113,23 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
     de acordo com com o usuário logado.
     """
 
-    queryset = StationStation.objects.all().order_by("id")
+    queryset = StationStation.objects.all()
     serializer_class = StationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
 
-    @method_decorator(vary_on_headers("Authorization"))
-    @method_decorator(cache_page(60 * 15), name="get_queryset")
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+    # @method_decorator(vary_on_headers("Authorization"))
+    # @method_decorator(cache_page(60 * 15), name="get_queryset")
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return (
+        cache_key = f"user_{self.request.user.id}_stations"
+        cached_queryset = cache.get((cache_key))
+        if cached_queryset is not None:
+            return cached_queryset
+
+        # se o cache não existir, realizar consulta no banco de dados
+        queryset = (
             StationStation.objects.filter(user=self.request.user)
             .prefetch_related(
                 "readings",
@@ -130,8 +137,10 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
                 "readings__station__sensors",
                 "readings__station__sensors__sensors_readings",
             )
-            .order_by("id")
+            .order_by("-id")
         )
+        # Armazena o resultado da consulta do cache
+        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
