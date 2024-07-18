@@ -7,12 +7,15 @@ import subprocess
 import os
 import logging
 
-SECRET = os.getenv('WEBHOOK_SECRET', '6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.')
+SECRET = os.getenv("WEBHOOK_SECRET", "6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.")
 PROJECT_DIR = "/home/alm_api/alm_api"  # Diretório fixo do projeto
-VENV_PIP_PATH = "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
+VENV_PIP_PATH = (
+    "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
+)
 VENV_PYTHON_PATH = "/home/alm_api/alm_api/.venv/bin/python"  # Caminho para o python do ambiente virtual
 
 logger = logging.getLogger(__name__)
+
 
 @csrf_exempt
 def webhook(request):
@@ -51,7 +54,8 @@ def webhook(request):
         logger.info("Instalando dependências do requirements.txt")
         result = subprocess.run(
             [VENV_PIP_PATH, "install", "-r", "requirements.txt"],
-            capture_output=True, text=True
+            capture_output=True,
+            text=True,
         )
 
         if result.returncode != 0:
@@ -61,8 +65,7 @@ def webhook(request):
         # Aplicar migrações do Django
         logger.info("Aplicando migrações do Django")
         result = subprocess.run(
-            [VENV_PYTHON_PATH, "manage.py", "migrate"],
-            capture_output=True, text=True
+            [VENV_PYTHON_PATH, "manage.py", "migrate"], capture_output=True, text=True
         )
 
         if result.returncode != 0:

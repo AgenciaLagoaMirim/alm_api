@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 from .filters import StationStationFilter
 from .models import (
@@ -115,17 +116,22 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
     serializer_class = StationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
 
+    @method_decorator(vary_on_headers("Authorization"))
     @method_decorator(cache_page(60 * 15), name="get_queryset")
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return StationStation.objects.filter(user=self.request.user).prefetch_related(
-            "readings",
-            "readings__station",
-            "readings__station__sensors",
-            "readings__station__sensors__sensors_readings",
-        ).order_by("id")
+        return (
+            StationStation.objects.filter(user=self.request.user)
+            .prefetch_related(
+                "readings",
+                "readings__station",
+                "readings__station__sensors",
+                "readings__station__sensors__sensors_readings",
+            )
+            .order_by("id")
+        )
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
