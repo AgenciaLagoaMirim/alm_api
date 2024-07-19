@@ -4,6 +4,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-  path("gitwebhook/", views.webhook, name="webhook"),  # Corrigido para `gitwebhook/`
+    path('webhook/', views.webhook, name='webhook'),  # URL para o webhook
 ]
 
