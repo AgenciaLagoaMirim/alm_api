@@ -24,5 +24,4 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("git/", include("gitwebhook.urls")),
-  
 ]
