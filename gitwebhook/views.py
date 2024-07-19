@@ -16,7 +16,6 @@ VENV_PYTHON_PATH = "/home/alm_api/alm_api/.venv/bin/python"  # Caminho para o py
 
 logger = logging.getLogger(__name__)
 
-
 @csrf_exempt
 def webhook(request):
     if request.method == "POST":
