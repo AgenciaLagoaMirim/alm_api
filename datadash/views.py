@@ -7,10 +7,7 @@ from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.views.decorators.vary import vary_on_headers
-from django.core.cache import cache
+
 
 from .filters import StationStationFilter
 from .models import (
@@ -58,7 +55,6 @@ class UserStationStationViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    @method_decorator(cache_page(60 * 15))
     def list(self, request, *args, **kwargs):
         print(f"Request {request}")
         response = super().list(request, *args, **kwargs)
@@ -117,49 +113,20 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
     serializer_class = StationStationSerializer
     pagination_class = BaseUserDataPaginationPagination
 
-    # @method_decorator(vary_on_headers("Authorization"))
-    # @method_decorator(cache_page(60 * 15), name="get_queryset")
-    # def dispatch(self, request, *args, **kwargs):
-    #     return super().dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
-        cache_key = f"user_{self.request.user.id}_stations"
-        cached_queryset = cache.get((cache_key))
-        if cached_queryset is not None:
-            return cached_queryset
-
-        # se o cache não existir, realizar consulta no banco de dados
-        queryset = (
-            StationStation.objects.filter(user=self.request.user)
-            .prefetch_related(
-                "readings",
-                "readings__station",
-                "readings__station__sensors",
-                "readings__station__sensors__sensors_readings",
-            )
-            .order_by("-id")
+        return StationStation.objects.filter(user=self.request.user).prefetch_related(
+            "readings",
+            "readings__station",
+            "readings__station__sensors",
+            "readings__station__sensors__sensors_readings",
         )
-        # Armazena o resultado da consulta do cache
-        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(
-                queryset, many=True, context={"request": request}
-            )
-            data_set = [
-                {
-                    "id": request.user.id,
-                    "user": request.user.email,
-                    "stations": serializer.data,
-                }
-            ]
-            return self.get_paginated_response(data_set)
-        serialize = self.get_serializer(
+        serializer = self.get_serializer(
             queryset, many=True, context={"request": request}
         )
+        # Construindo a resposta conforme a estrutura desejada
         data_set = [
             {
                 "id": request.user.id,
@@ -167,6 +134,7 @@ class UserDataSetViewSet(viewsets.ModelViewSet):
                 "stations": serializer.data,
             }
         ]
+
         return Response({"data_set": data_set})
 
 
