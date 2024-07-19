@@ -25,4 +25,3 @@ urlpatterns = [
     ),
     path("git/", include("gitwebhook.urls")),
 ]
-
