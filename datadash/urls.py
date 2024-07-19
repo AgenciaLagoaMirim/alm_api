@@ -7,6 +7,7 @@ from .views import (
     UserStationReadingsViewSet,
     UserStationSensorsViewSet,
     UserStationStationViewSet,
+    SQLStationReadingViewSet,
 )
 
 data_dash_router = routers.DefaultRouter()
@@ -34,3 +35,6 @@ data_dash_router.register(
 )
 
 data_dash_router.register("user-data-set", UserDataSetViewSet, basename="user-data-set")
+data_dash_router.register(
+    "sql-user-data-set", SQLStationReadingViewSet, basename="sql-user-data-set"
+)

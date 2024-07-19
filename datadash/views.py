@@ -1,3 +1,9 @@
+from django.db import connection
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+
+
 import requests
 from datetime import datetime
 from rest_framework import filters as drf_filters
@@ -19,6 +25,7 @@ from .models import (
 from .pagination import BaseUserDataPaginationPagination
 from .permissions import IsInGroupGeneralOrReadyOnly
 from .serializers import (
+    SQLStationReadingSerializer,
     StationReadingsSensorsSerializer,
     StationReadingsSerializer,
     StationSensorsSerializer,
@@ -338,3 +345,54 @@ class CustomViewSet(viewsets.ViewSet):
                 {"message": "Nome da estação não fornecido"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class SQLStationReadingViewSet(viewsets.ViewSet):
+    def list(self, request, *args, **kwargs):
+        # Obter o user_id a partir dos parâmetros da URL
+        user_id = request.query_params.get("user_id")
+
+        if not user_id:
+            return Response(
+                {"detail": "user_id parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Consulta SQL para obter os dados
+        query = """
+        SELECT
+            srs.data_value,
+            ss.id AS station_id,
+            ss.user_id,
+            st_s.code AS sensor_code
+        FROM public.station_readings_sensors srs
+        JOIN public.station_readings sr ON srs.reading_id = sr.id
+        JOIN public.station_station ss ON sr.station_id = ss.id
+        JOIN public.station_sensors st_s ON srs.sensor_id = st_s.id
+        WHERE sr.time_measure BETWEEN %s AND %s
+          AND ss.user_id = %s;
+        """
+
+        # Obter parâmetros do request
+        start_date = request.query_params.get("start_date", "2024-01-01 00:00:00")
+        end_date = request.query_params.get("end_date", "2024-01-31 23:59:59")
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [start_date, end_date, user_id])
+            rows = cursor.fetchall()
+
+        # Converter os resultados para dicionários
+        result = []
+        for row in rows:
+            result.append(
+                {
+                    "data_value": row[0],
+                    "station_id": row[1],
+                    "user_id": row[2],
+                    "sensor_code": row[3],
+                }
+            )
+
+        # Serializar e retornar a resposta
+        serializer = SQLStationReadingSerializer(result, many=True)
+        return Response(serializer.data)

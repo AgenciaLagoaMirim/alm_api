@@ -121,3 +121,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class DataSetSerializer(serializers.Serializer):
     data_set = CustomUserSerializer(many=True)
+
+
+########################################## SQL ##################################################
+
+
+class SQLStationReadingSerializer(serializers.Serializer):
+    data_value = serializers.DecimalField(max_digits=10, decimal_places=3)
+    station_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
+    sensor_code = serializers.CharField(max_length=100)
