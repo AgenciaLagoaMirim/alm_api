@@ -205,7 +205,7 @@ LOGGING = {
             "filename": os.getenv("filename"),
         },
     },
-    "loggers": {
+    "loggers": {  
         "django": {
             "handlers": ["file"],
             "level": "DEBUG",
