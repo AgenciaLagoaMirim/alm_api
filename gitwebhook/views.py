@@ -14,9 +14,7 @@ VENV_PIP_PATH = (
     "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
 )
 VENV_PYTHON_PATH = "/home/alm_api/alm_api/.venv/bin/python"  # Caminho para o python do ambiente virtual
-
 logger = logging.getLogger(__name__)
-
 
 @csrf_exempt
 def webhook(request):
