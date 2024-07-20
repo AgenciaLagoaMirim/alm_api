@@ -19,60 +19,68 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def webhook(request):
-    if request.method == "POST":
+    try:
+        if request.method == "POST":
 
-        logger.info("Iniciando processo de atualização...")
+            logger.info("Iniciando processo de atualização...")
 
-        # Validação da assinatura HMAC
-        signature = (
-            "sha1=" + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
-        )
-        if not hmac.compare_digest(
-            signature, request.headers.get("X-Hub-Signature", "")
-        ):
-            return HttpResponseForbidden("Forbidden")
+            # Validação da assinatura HMAC
+            signature = (
+                "sha1="
+                + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
+            )
+            if not hmac.compare_digest(
+                signature, request.headers.get("X-Hub-Signature", "")
+            ):
+                logger.error("Assinatura HMAC inválida.")
+                return HttpResponseForbidden("Forbidden")
 
-        # Verifique se o diretório existe
-        if not os.path.exists(PROJECT_DIR):
-            logger.error(f"Invalid PROJECT_DIR: {PROJECT_DIR}")
-            return HttpResponse("Invalid PROJECT_DIR", status=500)
+            # Verifique se o diretório existe
+            if not os.path.exists(PROJECT_DIR):
+                logger.error(f"Invalid PROJECT_DIR: {PROJECT_DIR}")
+                return HttpResponse("Invalid PROJECT_DIR", status=500)
 
-        logger.info(f"Changing directory to: {PROJECT_DIR}")
-        os.chdir(PROJECT_DIR)
+            logger.info(f"Changing directory to: {PROJECT_DIR}")
+            os.chdir(PROJECT_DIR)
 
-        logger.info(f"Current working directory: {os.getcwd()}")
-        logger.error(f"Carregando webhook: {os.getcwd()}")
+            logger.info(f"Current working directory: {os.getcwd()}")
+            logger.error(f"Carregando webhook: {os.getcwd()}")
 
-        # Executar git pull
-        result = subprocess.run(
-            ["git", "pull", "origin", "main"], capture_output=True, text=True
-        )
+            # Executar git pull
+            result = subprocess.run(
+                ["git", "pull", "origin", "main"], capture_output=True, text=True
+            )
 
-        if result.returncode != 0:
-            logger.error(f"Git pull failed: {result.stderr}")
-            return HttpResponse(result.stderr, status=500)
+            if result.returncode != 0:
+                logger.error(f"Git pull failed: {result.stderr}")
+                return HttpResponse(result.stderr, status=500)
 
-        # Instalar dependências do requirements.txt
-        logger.info("Instalando dependências do requirements.txt")
-        result = subprocess.run(
-            [VENV_PIP_PATH, "install", "-r", "requirements.txt"],
-            capture_output=True,
-            text=True,
-        )
+            # Instalar dependências do requirements.txt
+            logger.info("Instalando dependências do requirements.txt")
+            result = subprocess.run(
+                [VENV_PIP_PATH, "install", "-r", "requirements.txt"],
+                capture_output=True,
+                text=True,
+            )
 
-        if result.returncode != 0:
-            logger.error(f"Instalação de dependências falhou: {result.stderr}")
-            return HttpResponse(result.stderr, status=500)
+            if result.returncode != 0:
+                logger.error(f"Instalação de dependências falhou: {result.stderr}")
+                return HttpResponse(result.stderr, status=500)
 
-        # Aplicar migrações do Django
-        logger.info("Aplicando migrações do Django")
-        result = subprocess.run(
-            [VENV_PYTHON_PATH, "manage.py", "migrate"], capture_output=True, text=True
-        )
+            # Aplicar migrações do Django
+            logger.info("Aplicando migrações do Django")
+            result = subprocess.run(
+                [VENV_PYTHON_PATH, "manage.py", "migrate"],
+                capture_output=True,
+                text=True,
+            )
 
-        if result.returncode != 0:
-            logger.error(f"Aplicação de migrações falhou: {result.stderr}")
-            return HttpResponse(result.stderr, status=500)
+            if result.returncode != 0:
+                logger.error(f"Aplicação de migrações falhou: {result.stderr}")
+                return HttpResponse(result.stderr, status=500)
 
-        return HttpResponse(status=204)
-    return HttpResponse(status=405)
+            return HttpResponse(status=204)
+        return HttpResponse(status=405)
+    except Exception as e:
+        logger.error(f"Erro não tratado: {e}")
+        return HttpResponse("Erro interno do servidor", status=500)
