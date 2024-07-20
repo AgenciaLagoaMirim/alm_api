@@ -73,4 +73,3 @@ def webhook(request):
 
         return HttpResponse(status=204)
     return HttpResponse(status=405)
-
