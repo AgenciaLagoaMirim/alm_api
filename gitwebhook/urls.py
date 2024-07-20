@@ -6,3 +6,4 @@ from . import views
 urlpatterns = [
     path('webhook/', views.webhook, name='webhook'),  # URL para o webhook
 ]
+
