@@ -9,9 +9,7 @@ import logging
 
 SECRET = os.getenv("WEBHOOK_SECRET", "6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.")
 PROJECT_DIR = "/home/alm_api/alm_api"  # Diretório fixo do projeto
-VENV_PIP_PATH = (
-    "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
-)
+VENV_PIP_PATH = "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
 VENV_PYTHON_PATH = "/home/alm_api/alm_api/.venv/bin/python"  # Caminho para o python do ambiente virtual
 
 logger = logging.getLogger(__name__)
@@ -22,12 +20,9 @@ def webhook(request):
 
         logger.info("Iniciando processo de atualização!")
 
-        signature = (
-            "sha1=" + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
-        )
-        if not hmac.compare_digest(
-            signature, request.headers.get("X-Hub-Signature", "")
-        ):
+        # Validação da assinatura HMAC
+        signature = "sha1=" + hmac.new(SECRET.encode(), request.body, hashlib.sha1).hexdigest()
+        if not hmac.compare_digest(signature, request.headers.get("X-Hub-Signature", "")):
             return HttpResponseForbidden("Forbidden")
 
         # Verifique se o diretório existe
@@ -41,9 +36,7 @@ def webhook(request):
         logger.info(f"Current working directory: {os.getcwd()}")
 
         # Executar git pull
-        result = subprocess.run(
-            ["git", "pull", "origin", "main"], capture_output=True, text=True
-        )
+        result = subprocess.run(["git", "pull", "origin", "main"], capture_output=True, text=True)
 
         if result.returncode != 0:
             logger.error(f"Git pull failed: {result.stderr}")
@@ -51,11 +44,7 @@ def webhook(request):
 
         # Instalar dependências do requirements.txt
         logger.info("Instalando dependências do requirements.txt")
-        result = subprocess.run(
-            [VENV_PIP_PATH, "install", "-r", "requirements.txt"],
-            capture_output=True,
-            text=True,
-        )
+        result = subprocess.run([VENV_PIP_PATH, "install", "-r", "requirements.txt"], capture_output=True, text=True)
 
         if result.returncode != 0:
             logger.error(f"Instalação de dependências falhou: {result.stderr}")
@@ -63,9 +52,7 @@ def webhook(request):
 
         # Aplicar migrações do Django
         logger.info("Aplicando migrações do Django")
-        result = subprocess.run(
-            [VENV_PYTHON_PATH, "manage.py", "migrate"], capture_output=True, text=True
-        )
+        result = subprocess.run([VENV_PYTHON_PATH, "manage.py", "migrate"], capture_output=True, text=True)
 
         if result.returncode != 0:
             logger.error(f"Aplicação de migrações falhou: {result.stderr}")
