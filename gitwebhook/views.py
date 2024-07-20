@@ -7,7 +7,7 @@ import subprocess
 import os
 import logging
 
-SECRET = os.getenv("WEBHOOK_SECRET", "6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.")
+SECRET = os.getenv("WEBHOOK_SECRET", "6}ry[Qp2)0d,=hL_^8doM8NB1JZ,.!")
 PROJECT_DIR = "/home/alm_api/alm_api"  # Diretório fixo do projeto
 VENV_PIP_PATH = (
     "/home/alm_api/alm_api/.venv/bin/pip"  # Caminho para o pip do ambiente virtual
