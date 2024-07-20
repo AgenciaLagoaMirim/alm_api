@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
 import hmac
 import hashlib
 import subprocess
 import os
 import logging
+import json
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 SECRET = os.getenv("WEBHOOK_SECRET", "")
 PROJECT_DIR = "/home/alm_api/alm_api"  # Diretório fixo do projeto
@@ -21,7 +22,6 @@ logger = logging.getLogger(__name__)
 def webhook(request):
     try:
         if request.method == "POST":
-
             logger.info("Iniciando processo de atualização...")
 
             # Validação da assinatura HMAC
@@ -44,13 +44,11 @@ def webhook(request):
             os.chdir(PROJECT_DIR)
 
             logger.info(f"Current working directory: {os.getcwd()}")
-            logger.error(f"Carregando webhook: {os.getcwd()}")
 
             # Executar git pull
             result = subprocess.run(
                 ["git", "pull", "origin", "main"], capture_output=True, text=True
             )
-
             if result.returncode != 0:
                 logger.error(f"Git pull failed: {result.stderr}")
                 return HttpResponse(result.stderr, status=500)
@@ -62,7 +60,6 @@ def webhook(request):
                 capture_output=True,
                 text=True,
             )
-
             if result.returncode != 0:
                 logger.error(f"Instalação de dependências falhou: {result.stderr}")
                 return HttpResponse(result.stderr, status=500)
@@ -74,7 +71,6 @@ def webhook(request):
                 capture_output=True,
                 text=True,
             )
-
             if result.returncode != 0:
                 logger.error(f"Aplicação de migrações falhou: {result.stderr}")
                 return HttpResponse(result.stderr, status=500)
@@ -82,5 +78,5 @@ def webhook(request):
             return HttpResponse(status=204)
         return HttpResponse(status=405)
     except Exception as e:
-        logger.error(f"Erro não tratado: {e}")
+        logger.error(f"Erro não tratado: {e}", exc_info=True)
         return HttpResponse("Erro interno do servidor", status=500)
