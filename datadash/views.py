@@ -369,8 +369,8 @@ class SQLStationReadingViewSet(viewsets.ViewSet):
         JOIN public.station_readings sr ON srs.reading_id = sr.id
         JOIN public.station_station ss ON sr.station_id = ss.id
         JOIN public.station_sensors st_s ON srs.sensor_id = st_s.id
-        WHERE sr.time_measure BETWEEN %s AND %s
-          AND ss.user_id = %s;
+        WHERE sr.time_measure BETWEEN '2024-01-01' AND '2024-07-01'
+          AND ss.user_id = 3;
         """
 
         # Obter parâmetros do request
