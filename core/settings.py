@@ -31,10 +31,13 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+#DEBUG = os.getenv("DEBUG")
+# Defina a variável DEBUG com a conversão adequada
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
+
 
 # Logar a linha
-logger.debug("SECURITY WARNING: don't run with debug turned on in production! DEBUG = {}".format(DEBUG))
+logger.warning ("SECURITY WARNING: don't run with debug turned on in production! DEBUG = {}".format(DEBUG))
 
 
 ALLOWED_HOSTS = ["127.0.0.1", "185.137.92.73"]
