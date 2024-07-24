@@ -45,14 +45,14 @@ class Sl500(models.Model):
 
 
 class Sl500P(models.Model):
-    principal = models.ForeignKey(Sl500, models.DO_NOTHING)
+    principal = models.ForeignKey(Sl500, on_delete=models.CASCADE)
     dado_0 = models.IntegerField()
-    dado_1 = models.FloatField(blank=True, null=True)
-    dado_2 = models.FloatField(blank=True, null=True)
-    dado_3 = models.FloatField(blank=True, null=True)
-    dado_4 = models.FloatField(blank=True, null=True)
-    dado_5 = models.FloatField(blank=True, null=True)
-    dado_6 = models.IntegerField(blank=True, null=True)
+    dado_1 = models.FloatField()
+    dado_2 = models.FloatField()
+    dado_3 = models.FloatField()
+    dado_4 = models.FloatField()
+    dado_5 = models.FloatField()
+    dado_6 = models.IntegerField()
 
     class Meta:
         db_table = "sl500p"
