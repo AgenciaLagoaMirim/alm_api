@@ -126,7 +126,6 @@ class DataReceptionSL500(viewsets.ViewSet):
             sl500p_data = processed_data["SL500P"]
             for line_parts in sl500p_data:
                 Sl500P.objects.create(
-                    principal=sl500,
                     dado_0=int(line_parts[0]),
                     dado_1=float(line_parts[1]),
                     dado_2=float(line_parts[2]),
@@ -134,6 +133,7 @@ class DataReceptionSL500(viewsets.ViewSet):
                     dado_4=float(line_parts[4]),
                     dado_5=float(line_parts[5]),
                     dado_6=int(line_parts[6]),
+                    principal=sl500,
                 )
 
             return Response({"message": "Data saved successfully"}, status=201)
