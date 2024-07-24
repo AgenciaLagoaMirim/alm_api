@@ -3,7 +3,7 @@ from datadash.models import StationStation
 
 
 class Sl500(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     ano = models.IntegerField(blank=True, null=True)
     mes = models.IntegerField(blank=True, null=True)
     dia = models.IntegerField(blank=True, null=True)
