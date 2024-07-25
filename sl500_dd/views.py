@@ -118,6 +118,7 @@ class DataReceptionSL500(viewsets.ViewSet):
             # Salvando dados em Sl500P
             sl500p_data = processed_data["SL500P"]
             for line_parts in sl500p_data:
+                print(f"Creating Sl500P: principal={sl500}, dado_0={line_parts[0]}, dado_1={line_parts[1]}, dado_2={line_parts[2]}, dado_3={line_parts[3]}, dado_4={line_parts[4]}, dado_5={line_parts[5]}, dado_6={line_parts[6]}")
                 # Não definir o campo 'id', pois deve ser auto-incrementado
                 Sl500P.objects.create(
                     principal=sl500,
