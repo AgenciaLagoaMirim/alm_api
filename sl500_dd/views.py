@@ -27,7 +27,7 @@ class Sl500DataSetViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         paginator = SL500DdPagination()
-        sl500_objects = Sl500.objects.all()
+        sl500_objects = Sl500.objects.all().order_by('-id')
         sl500_page = paginator.paginate_queryset(sl500_objects, request)
         sl500_serializer = Sl500Serializer(sl500_page, many=True)
 
