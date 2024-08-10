@@ -11,13 +11,13 @@ from rest_framework import viewsets
 
 
 class Sl500DdViewSet(viewsets.ModelViewSet):
-    queryset = Sl500.objects.all()
+    queryset = Sl500.objects.all().order_by('-id')
     pagination_class = SL500DdPagination
     serializer_class = Sl500Serializer
 
 
 class Sl500PDdViewSet(viewsets.ModelViewSet):
-    queryset = Sl500P.objects.all()
+    queryset = Sl500P.objects.all().order_by('-id')
     pagination_class = SL500DdPagination
     serializer_class = Sl500PSerializer
 
