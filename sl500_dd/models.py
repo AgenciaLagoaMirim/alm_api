@@ -42,6 +42,7 @@ class Sl500(models.Model):
 
     class Meta:
         db_table = "sl500"
+        unique_together = ('ano', 'mes', 'dia', 'hora', 'minuto', 'segundo', 'station')
 
 
 class Sl500P(models.Model):

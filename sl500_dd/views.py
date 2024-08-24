@@ -78,6 +78,24 @@ class DataReceptionSL500(viewsets.ViewSet):
 
             # Salvando dados em Sl500
             sl500_data = processed_data["SL500"]
+            # ----- Ajudatando o data/hora da leitura do sensor para gravar
+            ano=int(sl500_data[0])
+            mes=int(sl500_data[1])
+            dia=int(sl500_data[2])
+            hora=int(sl500_data[3])
+            minuto=int(sl500_data[4])
+            segundo=float(sl500_data[5])
+            # Dividindo a string em partes
+            #
+            # Prepara para que data_safe, receba o data_hora.
+            #
+            data_hora = datetime(ano, mes, dia, hora, minuto)
+            #-------
+
+
+            # Formatando a data e hora conforme desejado
+            data_hora_formatada = data_hora.strftime("%Y-%m-%d %H:%M")
+
             sl500 = Sl500.objects.create(
                 ano=int(sl500_data[0]),
                 mes=int(sl500_data[1]),
@@ -110,7 +128,7 @@ class DataReceptionSL500(viewsets.ViewSet):
                 dado23=int(sl500_data[28]),
                 dado24=int(sl500_data[29]),
                 dado25=int(sl500_data[30]),
-                data_safe=datetime.now(),
+                data_safe=data_hora_formatada,
                 local_date=datetime.now(),
                 station=station,
             )
