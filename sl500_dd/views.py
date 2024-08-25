@@ -35,6 +35,9 @@ class Sl500DataSetViewSet(viewsets.ViewSet):
         return paginator.get_paginated_response(response_data)
 
 
+from django.utils import timezone
+from datetime import datetime
+
 class DataReceptionSL500(viewsets.ViewSet):
 
     def process_data(self, raw_data):
@@ -78,31 +81,27 @@ class DataReceptionSL500(viewsets.ViewSet):
 
             # Salvando dados em Sl500
             sl500_data = processed_data["SL500"]
-            # ----- Ajudatando o data/hora da leitura do sensor para gravar
-            ano=int(sl500_data[0])
-            mes=int(sl500_data[1])
-            dia=int(sl500_data[2])
-            hora=int(sl500_data[3])
-            minuto=int(sl500_data[4])
-            segundo=float(sl500_data[5])
-            # Dividindo a string em partes
-            #
-            # Prepara para que data_safe, receba o data_hora.
-            #
+
+            # Convertendo os valores para inteiros e floats conforme necessário
+            ano = int(sl500_data[0])
+            mes = int(sl500_data[1])
+            dia = int(sl500_data[2])
+            hora = int(sl500_data[3])
+            minuto = int(sl500_data[4])
+            segundo = float(sl500_data[5])
+
+            # Criando o datetime "aware" usando o timezone padrão do Django
             data_hora = datetime(ano, mes, dia, hora, minuto)
-            #-------
+            data_hora_aware = timezone.make_aware(data_hora, timezone.get_default_timezone())
 
-
-            # Formatando a data e hora conforme desejado
-            data_hora_formatada = data_hora.strftime("%Y-%m-%d %H:%M")
-
+            # Criando o objeto Sl500 com data_hora_aware
             sl500 = Sl500.objects.create(
-                ano=int(sl500_data[0]),
-                mes=int(sl500_data[1]),
-                dia=int(sl500_data[2]),
-                hora=int(sl500_data[3]),
-                minuto=int(sl500_data[4]),
-                segundo=float(sl500_data[5]),
+                ano=ano,
+                mes=mes,
+                dia=dia,
+                hora=hora,
+                minuto=minuto,
+                segundo=segundo,
                 dado1=float(sl500_data[6]),
                 dado2=float(sl500_data[7]),
                 dado3=float(sl500_data[8]),
@@ -128,16 +127,14 @@ class DataReceptionSL500(viewsets.ViewSet):
                 dado23=int(sl500_data[28]),
                 dado24=int(sl500_data[29]),
                 dado25=int(sl500_data[30]),
-                data_safe=data_hora_formatada,
-                local_date=datetime.now(),
+                data_safe=data_hora_aware,
+                local_date=timezone.now(),  # Usando timezone.now() para garantir que o datetime seja "aware"
                 station=station,
             )
 
             # Salvando dados em Sl500P
             sl500p_data = processed_data["SL500P"]
             for line_parts in sl500p_data:
-                print(f"Creating Sl500P: principal={sl500}, dado_0={line_parts[0]}, dado_1={line_parts[1]}, dado_2={line_parts[2]}, dado_3={line_parts[3]}, dado_4={line_parts[4]}, dado_5={line_parts[5]}, dado_6={line_parts[6]}")
-                # Não definir o campo 'id', pois deve ser auto-incrementado
                 Sl500P.objects.create(
                     principal=sl500,
                     dado_0=int(line_parts[0]),
@@ -153,3 +150,4 @@ class DataReceptionSL500(viewsets.ViewSet):
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
